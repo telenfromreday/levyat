@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign in | Livyato</title>
+<style>
+:root{--bg:#030504;--surface:#111b15;--ink:#f6fbf8;--muted:#c2d0c8;--line:#3f5a4b;--accent:#4ade80;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
+main{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px}
+h1{margin:0 0 4px;font-size:22px}p{color:var(--muted);font-size:14px;line-height:1.5}
+label{display:block;font-size:14px;margin:12px 0 4px}
+input[type=email],input[type=password]{width:100%;font:inherit;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.row{display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:13px;color:var(--muted)}
+button{font:inherit;cursor:pointer;border-radius:8px;padding:10px 14px;border:1px solid var(--accent);background:var(--accent);color:#03120a;font-weight:600;margin-top:14px;width:100%}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+a{color:var(--accent)}#msg{min-height:20px;font-size:14px;margin-top:10px}
+</style>
+</head>
+<body>
+<main>
+<h1>Livyato</h1>
+<p id="sub">Sign in to save your statements and pick up where you left off.</p>
+<form id="f" novalidate>
+<label for="em">Email</label><input id="em" type="email" autocomplete="email" required>
+<label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" minlength="8" required>
+<div class="row" id="termsrow" hidden><input id="terms" type="checkbox"><label for="terms" style="margin:0;display:inline">I am 18 or older and accept the <a href="/legal#terms">Terms</a> and <a href="/legal#privacy">Privacy Policy</a>.</label></div>
+<button type="submit" id="go">Sign in</button>
+<button type="button" class="ghost" id="swap">Create an account instead</button>
+<button type="button" class="ghost" id="reset">I forgot my password</button>
+</form>
+<div id="msg" role="status"></div>
+<p><a href="/">Back to the home page</a></p>
+</main>
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(function(){
+var c=window.LIVYATO||{},$=function(i){return document.getElementById(i)},mode="in",msg=function(t){$("msg").textContent=t};
+if(!c.SUPABASE_URL||!c.SUPABASE_ANON_KEY||!window.supabase){msg("Sign-in is not set up yet. Add your Supabase details to config.js.");$("go").disabled=true;return}
+var sb=window.supabase.createClient(c.SUPABASE_URL,c.SUPABASE_ANON_KEY);
+sb.auth.getSession().then(function(r){if(r.data.session)location.href="/app"});
+function setMode(m){mode=m;$("termsrow").hidden=m!=="up";$("go").textContent=m==="up"?"Create account":"Sign in";$("swap").textContent=m==="up"?"I already have an account":"Create an account instead";$("pw").autocomplete=m==="up"?"new-password":"current-password";msg("")}
+$("swap").onclick=function(){setMode(mode==="in"?"up":"in")};
+$("reset").onclick=function(){var e=$("em").value.trim();if(!e){msg("Enter your email first.");return}sb.auth.resetPasswordForEmail(e,{redirectTo:location.origin+"/login"}).then(function(r){msg(r.error?"Could not send the email.":"If that email has an account, a reset link is on its way.")})};
+$("f").onsubmit=function(ev){ev.preventDefault();var e=$("em").value.trim(),p=$("pw").value;
+ if(!e||p.length<8){msg("Enter your email and a password of at least 8 characters.");return}
+ if(mode==="up"){if(!$("terms").checked){msg("Please confirm the Terms and Privacy Policy.");return}
+  sb.auth.signUp({email:e,password:p}).then(function(r){if(r.error){msg(r.error.message);return}msg(r.data.session?"Account created.":"Check your email to confirm your account.");if(r.data.session)location.href="/app"})}
+ else sb.auth.signInWithPassword({email:e,password:p}).then(function(r){if(r.error){msg("Email or password is not correct.");return}location.href="/app"})};
+})();
+</script>
+</body>
+</html>

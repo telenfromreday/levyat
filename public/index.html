@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Livyato | Raw data in. Clarity out.</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;
+--bg:#020504;--bg2:#08100c;--ink:#f4faf6;--soft:#b9c7bf;--em:#34e89e;--em2:#7dffc4;--line:rgba(125,255,196,.28);--glass:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03))}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);scroll-behavior:auto}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Instrument Sans",system-ui,sans-serif}
+h1,h2,h3,.brand{font-family:"Space Grotesk","Instrument Sans",system-ui,sans-serif;letter-spacing:-.02em;margin:0}
+a{color:var(--em2)}
+.btn{display:inline-block;padding:13px 26px;border-radius:999px;font-weight:600;text-decoration:none;color:#021208;background:linear-gradient(135deg,#9dffd0,#2fd68a);box-shadow:0 0 26px rgba(52,232,158,.4);min-height:44px}
+.btn.g{background:rgba(255,255,255,.06);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#story{position:relative;height:700vh}
+#stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#000}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;pointer-events:none}
+#dark{inset:0;background:#000;opacity:0}
+#flash{inset:0;background:radial-gradient(circle at 50% 52%,rgba(52,232,158,.75),transparent 55%);opacity:0;mix-blend-mode:screen}
+.tx{left:6vw;right:6vw;bottom:12vh;max-width:640px;opacity:0;will-change:opacity,transform}
+.tx .eyebrow{font:600 .8rem "Space Grotesk",sans-serif;letter-spacing:.32em;color:var(--em2);margin:0 0 14px}
+.tx h1{font-size:clamp(2.2rem,6vw,4.4rem);line-height:1.04;font-weight:700}
+.tx h2{font-size:clamp(1.8rem,4.6vw,3.2rem);line-height:1.1;font-weight:500}
+.tx p.s{color:var(--soft);margin:16px 0 22px;max-width:46ch}
+.tx.c{text-align:left}
+#hero a{pointer-events:auto;margin:0 10px 10px 0}
+#hint{left:0;right:0;bottom:3.5vh;text-align:center;font-size:.8rem;letter-spacing:.3em;color:var(--soft)}
+#mark{inset:0;display:grid;place-content:center;justify-items:center;gap:18px;opacity:0}
+#mark svg{width:min(34vw,150px);filter:drop-shadow(0 0 22px rgba(52,232,158,.8))}
+#mark b{font:700 1.5rem "Space Grotesk",sans-serif;letter-spacing:.45em;text-indent:.45em}
+#load{position:absolute;inset:0;z-index:5;display:grid;place-content:center;background:#000;color:var(--soft);letter-spacing:.3em;font-size:.8rem;transition:opacity .8s}
+nav{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;display:flex;align-items:center;gap:22px;padding:14px 4vw;background:rgba(2,5,4,.62);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);opacity:0;transform:translateY(-100%);transition:opacity .6s,transform .6s;pointer-events:none}
+body.rev nav,body.static nav{opacity:1;transform:none;pointer-events:auto}
+nav .brand{font-size:1.1rem;letter-spacing:.3em;color:#fff;text-decoration:none;margin-right:auto}
+nav a.l{color:var(--soft);text-decoration:none;font-size:.95rem}
+nav a.l:hover{color:#fff}
+nav .btn{padding:9px 20px;min-height:44px}
+@media(max-width:900px){nav a.l{display:none}}
+#site{position:relative;background:var(--bg)}
+section.s{max-width:1080px;margin:0 auto;padding:96px 6vw}
+section.s h2{font-size:clamp(1.8rem,4vw,2.9rem);line-height:1.1;margin-bottom:16px}
+section.s>p.lead{color:var(--soft);max-width:60ch;margin:0 0 36px;font-size:1.1rem}
+.eb{font:600 .78rem "Space Grotesk",sans-serif;letter-spacing:.3em;color:var(--em2);margin-bottom:12px;display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.card h3{font-size:1.15rem;margin-bottom:8px}
+.card p{margin:0;color:var(--soft);font-size:.98rem}
+.num{font:700 .85rem "Space Grotesk",sans-serif;color:var(--em2);letter-spacing:.2em}
+.prev{margin-top:28px}
+.prev .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:12px}
+.prev .tiles div{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.prev .tiles span{display:block;font-size:.82rem;color:var(--soft)}
+.prev .tiles b{font:600 1.35rem ui-monospace,Menlo,Consolas,monospace}
+.note{color:var(--soft);font-size:.9rem}
+details{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600;min-height:28px}
+details p{color:var(--soft);margin:10px 0 0}
+.cta{text-align:center;padding:110px 6vw}
+.cta h2{font-size:clamp(2rem,5vw,3.6rem);margin-bottom:22px}
+footer{border-top:1px solid var(--line);padding:30px 6vw;text-align:center;color:var(--soft);font-size:.88rem}
+.sthero{display:none;min-height:100vh;place-content:center;text-align:center;padding:120px 6vw 40px;background:radial-gradient(700px 420px at 50% 30%,rgba(52,232,158,.22),transparent 70%),var(--bg)}
+.sthero h1{font-size:clamp(2.4rem,7vw,5rem);line-height:1.05;margin-bottom:18px}
+.sthero p{color:var(--soft);max-width:46ch;margin:0 auto 26px}
+body.static #story{display:none}body.static .sthero{display:grid}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+footer{padding:50px 6vw 28px;text-align:left;font-size:1rem;color:var(--soft)}
+.fgrid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;gap:30px}
+@media(max-width:900px){.fgrid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.fgrid{grid-template-columns:1fr}}
+footer .brand{font-size:1.1rem;letter-spacing:.3em;color:#fff;text-decoration:none}
+footer p{color:var(--soft);font-size:.92rem;margin:10px 0 0}
+footer h4{font:600 .8rem "Space Grotesk",sans-serif;letter-spacing:.25em;color:var(--em2);margin:0 0 12px;text-transform:uppercase}
+footer ul{list-style:none;margin:0;padding:0}footer li a{display:inline-block;padding:6px 0;color:var(--soft);text-decoration:none;min-height:32px}footer li a:hover{color:#fff}
+.soc{display:flex;flex-wrap:wrap;gap:10px}
+.si{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff}
+.si svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.si svg .f{fill:currentColor;stroke:none}
+span.si{opacity:.6;cursor:default}a.si:hover{border-color:var(--em2);box-shadow:0 0 18px rgba(52,232,158,.4);color:var(--em2)}
+.fine{max-width:1180px;margin:28px auto 0;text-align:center;font-size:.85rem}
+/* ---- Livyato shared UI: consent banner + interactive buttons ---- */
+button,.btn,a.si,nav a.l,.fgrid li a,summary,#nav li{transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,filter .22s ease,background-color .2s ease,border-color .2s ease,color .2s ease;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button.liv-hov:not(:disabled),.btn.liv-hov,a.si.liv-hov{transform:translate(var(--lx,0px),var(--ly,0px)) translateY(-2px) scale(1.05);box-shadow:0 10px 30px rgba(52,232,158,.38),0 0 0 1px rgba(125,255,196,.5)}
+nav a.l.liv-hov,.fgrid li a.liv-hov{transform:translate(var(--lx,0px),var(--ly,0px)) translateX(3px)}
+summary.liv-hov,#nav li.liv-hov{transform:translateX(4px)}
+button.liv-press:not(:disabled),.btn.liv-press,a.si.liv-press{transform:scale(.94)!important;transition-duration:.08s!important;box-shadow:0 0 0 3px rgba(125,255,196,.5)!important}
+.liv-pop{animation:liv-pop .38s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes liv-pop{0%{transform:scale(.94)}60%{transform:scale(1.07)}100%{transform:scale(1)}}
+.liv-rip{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.38);transform:scale(0);animation:liv-rip .65s ease-out forwards}
+@keyframes liv-rip{to{transform:scale(1);opacity:0}}
+@media(prefers-reduced-motion:reduce){button.liv-hov,.btn.liv-hov,a.si.liv-hov,nav a.l.liv-hov,.fgrid li a.liv-hov,summary.liv-hov{transform:none!important}.liv-pop,.liv-rip{animation:none!important}button.liv-press,.btn.liv-press,a.si.liv-press{transform:none!important}}
+#liv-cc{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:99999;width:min(940px,calc(100% - 24px));display:flex;gap:16px 22px;align-items:center;flex-wrap:wrap;padding:16px 20px;border-radius:18px;background:linear-gradient(145deg,rgba(18,30,24,.96),rgba(6,12,9,.96));border:1px solid rgba(125,255,196,.4);box-shadow:0 18px 50px rgba(0,0,0,.6);color:#f4faf6;font:15px/1.5 "Instrument Sans",system-ui,sans-serif;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#liv-cc p{margin:0;flex:1 1 360px;color:#d6e3db}
+#liv-cc a{color:#7dffc4}
+#liv-cc .cc-b{display:flex;gap:10px;flex-wrap:wrap}
+#liv-cc button{font:600 .95rem "Instrument Sans",system-ui,sans-serif;min-height:44px;padding:10px 20px;border-radius:999px;cursor:pointer;color:#021208;background:linear-gradient(135deg,#9dffd0,#2fd68a);border:1px solid rgba(255,255,255,.45)}
+#liv-cc button.g{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(125,255,196,.6)}
+
+/* ---- Livyato cursor-reactive emerald edge field ---- */
+#edge-particles{position:fixed;inset:0;width:100%;height:100%;z-index:15;pointer-events:none;opacity:.88;mix-blend-mode:screen}
+@media(max-width:700px){#edge-particles{opacity:.62}}
+@media(prefers-reduced-motion:reduce){#edge-particles{display:none}}
+
+/* Livyato motion system: content reveals smoothly without exposing CSS as page text. */
+@media (prefers-reduced-motion:no-preference){
+ #site .s, #site .cta, #site footer .fgrid {opacity:0;transform:translate3d(0,26px,0);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+ #site .s.liv-visible, #site .cta.liv-visible, #site footer .fgrid.liv-visible {opacity:1;transform:translate3d(0,0,0)}
+ #site .s h2,#site .s p,#site .s .card,#site .s .tiles,#site .s .prev {transition:opacity .65s ease,transform .7s cubic-bezier(.2,.7,.2,1),color .3s ease,text-shadow .3s ease}
+ #site .s .card {transform:translateY(12px);transition-delay:.08s}
+ #site .s.liv-visible .card {transform:translateY(0)}
+ #site .card {transform-style:preserve-3d;transition:transform .32s ease,border-color .32s ease,box-shadow .32s ease}
+ #site .card:hover {transform:translateY(-7px) scale(1.012);border-color:rgba(125,255,196,.58);box-shadow:0 18px 48px rgba(0,0,0,.3),0 0 26px rgba(52,232,158,.1)}
+ #site h2:hover,#site h3:hover {color:#baffdc;text-shadow:0 0 22px rgba(52,232,158,.2)}
+}
+@media(prefers-reduced-motion:reduce){#site .s,#site .cta,#site footer .fgrid{opacity:1!important;transform:none!important}}
+</style>
+</head>
+<body>
+
+<canvas id="edge-particles" aria-hidden="true"></canvas>
+
+<nav aria-label="Main">
+  <a class="brand" href="#top">LIVYATO</a>
+  <a class="l" href="#bookkeeping">Bookkeeping</a><a class="l" href="#intelligence">Analytics and AI</a><a class="l" href="#tax">VAT and tax prep</a><a class="l" href="#reports">Reports</a><a class="l" href="#pricing">Pricing</a><a class="l" href="#faq">FAQ</a>
+  <a class="btn" data-app href="#">Open Livyato</a>
+</nav>
+
+<header class="sthero" id="top"><div><h1>Raw data in.<br>Clarity out.</h1><p>Livyato turns bank statements into organised financial records, plain-English insights and accountant-ready reports.</p><a class="btn" data-app href="#">Get started</a></div></header>
+
+<div id="story" aria-label="Introduction animation">
+  <div id="stage">
+    <canvas id="cv" aria-hidden="true"></canvas>
+    <div id="load" aria-live="polite">AWAKENING</div>
+    <div class="ov tx" id="hero"><p class="eyebrow">LIVYATO</p><h1>Raw data goes in.<br>Clarity comes out.</h1><p class="s">An AI bookkeeping platform that devours bank statements and returns organised books, insights and reports.</p><a class="btn" data-app href="#">Get started</a><a class="btn g" href="#site">Skip the intro</a></div>
+    <div class="ov tx c" id="t1"><p class="eyebrow">THE PROBLEM</p><h2>Rows of numbers nobody has time to read.</h2></div>
+    <div class="ov tx c" id="t2"><p class="eyebrow">THE TRANSFORMATION</p><h2>Sorted into clean, organised financial records.</h2></div>
+    <div class="ov tx c" id="t3"><p class="eyebrow">THE RESULT</p><h2>Insights that make the next decision easier.</h2></div>
+    <div class="ov" id="hint">SCROLL</div>
+    <div class="ov" id="dark"></div><div class="ov" id="flash"></div>
+    <div class="ov" id="mark"><svg viewBox="0 0 100 60" fill="none" aria-hidden="true"><path d="M4 30C22 6 78 6 96 30C78 54 22 54 4 30Z" stroke="#34e89e" stroke-width="2.5"/><ellipse cx="50" cy="30" rx="5.5" ry="19" fill="#7dffc4"/></svg><b>LIVYATO</b></div>
+  </div>
+</div>
+
+<main id="site">
+  <section class="s" id="about"><span class="eb">WHAT IT DOES</span><h2>Bookkeeping that starts with a bank statement.</h2><p class="lead">Livyato is built for small business owners who do their own books. Drop in a statement and it does the sorting, the sums and the first draft of the paperwork, then asks you about whatever it is not sure of.</p>
+    <div class="grid"><div class="card"><h3>Owner-operators</h3><p>Online sellers, freelancers and small shops who keep their own records.</p></div><div class="card"><h3>Bookkeepers</h3><p>A faster first pass over a client's statements before the careful work begins.</p></div><div class="card"><h3>Accountants</h3><p>Cleaner, categorised exports with unsure and flagged items marked.</p></div></div></section>
+
+  <section class="s" id="bookkeeping"><span class="eb">BANK STATEMENT TO BOOKKEEPING</span><h2>Four steps, no accounting setup.</h2><p class="lead">Upload a CSV, Excel or text-based PDF statement. Everything is read in your browser.</p>
+    <div class="grid"><div class="card"><span class="num">01</span><h3>Upload</h3><p>Drop in your statement. Livyato finds the bank, the period and the columns.</p></div><div class="card"><span class="num">02</span><h3>Organise</h3><p>Every transaction gets a category, and a confidence level you can see.</p></div><div class="card"><span class="num">03</span><h3>Review</h3><p>Approve, change or flag the uncertain ones. Livyato remembers your corrections.</p></div><div class="card"><span class="num">04</span><h3>Download</h3><p>Take away an Excel workbook, an accountant report or a CSV.</p></div></div>
+    <div class="prev card"><b>Sample dashboard</b> <span class="note">(made-up business, not real data)</span><div class="tiles"><div><span>Money received</span><b>R55 140,00</b></div><div><span>Money spent</span><b>R20 150,70</b></div><div><span>Business expenses</span><b>R16 761,00</b></div><div><span>Operating profit</span><b>R38 379,00</b></div></div></div></section>
+
+  <section class="s" id="intelligence"><span class="eb">ANALYTICS AND AI</span><h2>Understand the business, not just the bank.</h2><p class="lead">Monthly cash flow, your biggest costs and plain-English explanations of what changed.</p>
+    <div class="grid"><div class="card"><h3>Financial dashboards</h3><p>Money in, money out, expenses and estimated profit at a glance.</p></div><div class="card"><h3>Business analytics</h3><p>Sales, expenses and profit by month, with trends and a forecast.</p></div><div class="card"><h3>Business analyst assistant</h3><p>Ask a question about your statement and get an answer worked out from your own numbers, with the transactions behind it.</p></div><div class="card"><h3>Receipts</h3><p>Enter your receipts and Livyato matches them to payments by amount and date.</p></div></div></section>
+
+  <section class="s" id="tax"><span class="eb">VAT AND TAX PREPARATION</span><h2>Prepared for your accountant, not filed behind your back.</h2><p class="lead">Livyato helps you get organised for VAT and provisional tax. It counts only items you have confirmed, asks for invoices before treating VAT as claimable, and labels everything as an estimate.</p>
+    <p class="note">Livyato does not file with SARS and is not tax advice. Have a tax practitioner review your figures before you submit anything.</p></section>
+
+  <section class="s" id="reports"><span class="eb">REPORTS AND EXPORTS</span><h2>Hand over something tidy.</h2><div class="grid"><div class="card"><h3>Excel workbook</h3><p>Summary, monthly cash flow, categories and every transaction.</p></div><div class="card"><h3>Accountant report</h3><p>A clean one-file report you can print or save as PDF.</p></div><div class="card"><h3>Monthly bookkeeping report</h3><p>One month of totals, categories, receipts and items to check.</p></div><div class="card"><h3>Transactions CSV</h3><p>Plain data, including each item's review status.</p></div></div></section>
+
+  <section class="s" id="pricing"><span class="eb">PRICING</span><h2>Pricing has not been announced yet.</h2><p class="lead">Livyato is still being built. Open it to try the current version.</p><a class="btn" data-app href="#">Open Livyato</a></section>
+
+  <section class="s" id="faq"><span class="eb">QUESTIONS</span><h2>Straight answers.</h2>
+    <details><summary>Is my bank statement uploaded to a server?</summary><p>Not unless you choose. Your file is read in your browser. It is uploaded only if you sign in and choose to save it to your account.</p></details>
+    <details><summary>Which files can I use?</summary><p>CSV and Excel are the most accurate. PDF works when it is text, not a scan or photo. If Livyato cannot tell which columns are which, it asks you to pick them.</p></details>
+    <details><summary>Can it file my tax return or VAT201?</summary><p>No. It prepares organised figures and estimates for you or your accountant to check.</p></details>
+    <details><summary>Where is my data kept?</summary><p>Saved work stays in your browser on that device. Clear it from within the app when you are done, especially on a shared computer.</p></details></section>
+
+  <section class="cta"><h2>Feed it a statement. See what comes back.</h2><a class="btn" data-app href="#">Get started</a></section>
+  <footer id="foot"><div class="fgrid"><div><a class="brand" href="#top">LIVYATO</a><p>Raw data in. Clarity out.</p></div><div><h4>Explore</h4><ul><li><a data-p="reviews">Reviews</a></li><li><a data-p="pricing">Pricing</a></li><li><a data-p="how-it-works">How It Works</a></li><li><a data-p="troubleshooting">Troubleshooting</a></li><li><a data-p="promo-codes">Promo Codes</a></li></ul></div><div><h4>Legal</h4><ul><li><a data-p="contact">Contact</a></li><li><a data-p="terms">Terms of Service</a></li><li><a data-p="privacy">Privacy Policy</a></li><li><a data-p="cookies">Cookie Policy</a></li><li><a data-p="refund">Request a Refund</a></li><li><a data-p="purchases">Your Purchases</a></li></ul></div><div><h4>Trust and safety</h4><ul><li><a data-p="security">Security</a></li><li><a data-p="deletion">Data Deletion Request</a></li><li><a data-p="licences">Licences and Credits</a></li><li><a href="#" data-cookie-settings>Cookie Settings</a></li></ul></div><div><h4>Connect</h4><div class="soc"><span class="si" data-s="instagram" data-l="Instagram" role="img" aria-label="Instagram (link coming soon)" title="Instagram (coming soon)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle class="f" cx="17.2" cy="6.8" r="1.1"/></svg></span><span class="si" data-s="x" data-l="X" role="img" aria-label="X (link coming soon)" title="X (coming soon)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"/></svg></span><span class="si" data-s="facebook" data-l="Facebook" role="img" aria-label="Facebook (link coming soon)" title="Facebook (coming soon)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8.5h3V5h-3.2C11 5 9.8 6.7 9.8 9v2H7v3.5h2.8V21h3.7v-6.5h2.9l.6-3.5h-3.5V9.6c0-.7.3-1.1.5-1.1z"/></svg></span><span class="si" data-s="tiktok" data-l="TikTok" role="img" aria-label="TikTok (link coming soon)" title="TikTok (coming soon)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4v10.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 4c.3 2.4 1.9 4 4.5 4.2"/></svg></span><span class="si" data-s="youtube" data-l="YouTube" role="img" aria-label="YouTube (link coming soon)" title="YouTube (coming soon)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="4"/><path class="f" d="M10.3 9.4v5.2l4.4-2.6z"/></svg></span><span class="si" data-s="linkedin" data-l="LinkedIn" role="img" aria-label="LinkedIn (link coming soon)" title="LinkedIn (coming soon)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="9.5" width="3" height="10" rx=".5"/><circle class="f" cx="5.5" cy="5.8" r="1.7"/><path d="M10.5 19.5v-10h3v1.5c.6-1 1.7-1.8 3.2-1.8 2.6 0 3.3 1.8 3.3 4.2v6.1h-3v-5.4c0-1.2-.3-2.1-1.6-2.1-1.4 0-2 1-2 2.2v5.3z"/></svg></span><span class="si" data-s="whatsapp" data-l="WhatsApp" role="img" aria-label="WhatsApp (link coming soon)" title="WhatsApp (coming soon)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5z"/><path d="M9 8.6c.4 2.7 2.4 5 5.6 6l1.3-1.4-2-1-.9.9c-1-.4-2-1.4-2.4-2.4l.9-.9-1-2z"/></svg></span></div></div></div><p class="fine">Livyato provides preparation tools and estimates, not tax, accounting or filing services. © 2026 Livyato.</p></footer>
+</main>
+
+<script>var APP_URL="/app",PAGES_URL="/legal",LIV_POLICY="/legal#cookies";
+/* Paste your social links between the quotes. An empty one stays a "coming soon" icon. */
+var SOCIAL={instagram:"",x:"",facebook:"",tiktok:"",youtube:"",linkedin:"",whatsapp:""};
+[].forEach.call(document.querySelectorAll("[data-app]"),function(a){a.href=APP_URL;a.target="_top"});
+[].forEach.call(document.querySelectorAll("[data-p]"),function(a){a.href=PAGES_URL+"#"+a.getAttribute("data-p");a.target="_top"});
+[].forEach.call(document.querySelectorAll("[data-s]"),function(el){var u=SOCIAL[el.getAttribute("data-s")];if(!u)return;var a=document.createElement("a");a.className="si";a.href=u;a.target="_blank";a.rel="noopener noreferrer";a.setAttribute("aria-label",el.getAttribute("data-l"));a.title=el.getAttribute("data-l");a.innerHTML=el.innerHTML;el.parentNode.replaceChild(a,el)});</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+function fallback(){document.body.classList.add("static");var l=$("load");if(l)l.style.display="none"}
+try{
+var ok=true;try{var tc=document.createElement("canvas");if(!(tc.getContext("webgl2")||tc.getContext("webgl")))ok=false}catch(e){ok=false}
+if(!window.THREE||!window.gsap||!window.ScrollTrigger||matchMedia("(prefers-reduced-motion:reduce)").matches)ok=false;
+if(!ok){fallback();return}
+var low=(navigator.hardwareConcurrency||4)<=4||innerWidth<700,TH=THREE;
+gsap.registerPlugin(ScrollTrigger);
+if(low)$("story").style.height="520vh";
+var cv=$("cv"),R=new TH.WebGLRenderer({canvas:cv,antialias:!low,powerPreference:"high-performance"});
+R.setPixelRatio(Math.min(devicePixelRatio||1,low?1.25:1.75));R.toneMapping=TH.ACESFilmicToneMapping;R.toneMappingExposure=1.15;R.outputEncoding=TH.sRGBEncoding;R.shadowMap.enabled=true;R.shadowMap.type=TH.PCFSoftShadowMap;
+var scene=new TH.Scene();scene.background=new TH.Color(0x010302);scene.fog=new TH.FogExp2(0x030605,.02);
+var cam=new TH.PerspectiveCamera(48,1,.1,300);
+/* environment: emerald light panels so the black scales have something to reflect */
+var pm=new TH.PMREMGenerator(R),envS=new TH.Scene();envS.background=new TH.Color(0x010302);
+function panel(x,y,z,w,h,c,i){var m=new TH.Mesh(new TH.PlaneGeometry(w,h),new TH.MeshBasicMaterial({color:new TH.Color(c).multiplyScalar(i),side:TH.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);envS.add(m)}
+panel(8,6,4,6,10,0x1f9d68,4);panel(-8,3,-5,10,3,0x0f6a45,3);panel(0,10,-2,12,4,0x9fb8ad,1.6);panel(0,-6,6,14,2,0x063d28,2);panel(-4,2,9,4,6,0x2fbf88,2);
+scene.environment=pm.fromScene(envS,.04).texture;
+/* procedural textures */
+function cvs(w,h){var c=document.createElement("canvas");c.width=w;c.height=h;return c}
+/* cracked armour plates: jittered cells drawn with wraparound so the tile repeats */
+var sc=cvs(256,256),x=sc.getContext("2d");x.fillStyle="#2a2a2a";x.fillRect(0,0,256,256);
+var CS=256/9;
+for(var gy=0;gy<9;gy++)for(var gx=0;gx<9;gx++){var cx0=gx*CS+(gy%2?CS/2:0)+(Math.random()-.5)*10,cy0=gy*CS+(Math.random()-.5)*10,rx=CS*.62+Math.random()*6,ry=rx*(.7+Math.random()*.25),rot=Math.random()*3.14;
+ for(var ox=-256;ox<=256;ox+=256)for(var oy=-256;oy<=256;oy+=256){var px=cx0+ox,py=cy0+oy;if(px<-30||px>286||py<-30||py>286)continue;
+  var gg0=x.createRadialGradient(px,py-3,1,px,py,rx);gg0.addColorStop(0,"#ffffff");gg0.addColorStop(.55,"#b4b4b4");gg0.addColorStop(1,"#0c0c0c");
+  x.save();x.translate(px,py);x.rotate(rot);x.scale(1,ry/rx);x.translate(-px,-py);x.fillStyle=gg0;x.beginPath();x.arc(px,py,rx,0,6.283);x.fill();x.restore()}}
+var scaleT=new TH.CanvasTexture(sc);scaleT.wrapS=scaleT.wrapT=TH.RepeatWrapping;scaleT.repeat.set(5,26);
+/* emissive map: blue spine line and rows of bioluminescent dots along the flanks */
+var ec=cvs(256,1024),e2=ec.getContext("2d");e2.fillStyle="#000";e2.fillRect(0,0,256,1024);
+var gr=e2.createLinearGradient(0,0,22,0);gr.addColorStop(0,"#34e89e");gr.addColorStop(1,"rgba(52,232,158,0)");e2.fillStyle=gr;e2.fillRect(0,0,22,1024);
+var gr2=e2.createLinearGradient(256,0,234,0);gr2.addColorStop(0,"#34e89e");gr2.addColorStop(1,"rgba(52,232,158,0)");e2.fillStyle=gr2;e2.fillRect(234,0,22,1024);
+for(var k=0;k<125;k++){[64,192].forEach(function(dx0){var dy0=k*8.2+(dx0>100?4:0),dg=e2.createRadialGradient(dx0,dy0,0,dx0,dy0,6);dg.addColorStop(0,"rgba(190,255,225,1)");dg.addColorStop(.35,"rgba(52,232,158,.9)");dg.addColorStop(1,"rgba(52,232,158,0)");e2.fillStyle=dg;e2.fillRect(dx0-6,dy0-6,12,12)})}
+var emT=new TH.CanvasTexture(ec);emT.wrapS=TH.RepeatWrapping;
+var glc=cvs(64,64),gx2=glc.getContext("2d"),gg=gx2.createRadialGradient(32,32,0,32,32,32);gg.addColorStop(0,"rgba(190,255,225,1)");gg.addColorStop(.25,"rgba(52,232,158,.8)");gg.addColorStop(1,"rgba(52,232,158,0)");gx2.fillStyle=gg;gx2.fillRect(0,0,64,64);
+var glowT=new TH.CanvasTexture(glc);
+/* skin colour map: slate armour, paler grey-blue belly, mottling and cracks */
+var cc=cvs(512,512),c2=cc.getContext("2d"),bgd=c2.createLinearGradient(0,0,512,0);
+bgd.addColorStop(0,"#050807");bgd.addColorStop(.2,"#0b120e");bgd.addColorStop(.38,"#17231c");bgd.addColorStop(.46,"#34443a");bgd.addColorStop(.5,"#566a5e");bgd.addColorStop(.54,"#34443a");bgd.addColorStop(.62,"#17231c");bgd.addColorStop(.8,"#0b120e");bgd.addColorStop(1,"#050807");
+c2.fillStyle=bgd;c2.fillRect(0,0,512,512);
+for(var bi=0;bi<70;bi++){var bx0=Math.random()*512,by0=Math.random()*512,br=20+Math.random()*60,bg2=c2.createRadialGradient(bx0,by0,0,bx0,by0,br);bg2.addColorStop(0,Math.random()<.5?"rgba(120,165,140,.12)":"rgba(0,0,0,.28)");bg2.addColorStop(1,"rgba(0,0,0,0)");c2.fillStyle=bg2;c2.fillRect(bx0-br,by0-br,br*2,br*2)}
+c2.strokeStyle="rgba(0,0,0,.35)";c2.lineWidth=1.5;
+for(var ci=0;ci<170;ci++){var qx=Math.random()*512,qy=Math.random()*512;c2.beginPath();c2.moveTo(qx,qy);for(var cj=0;cj<3;cj++){qx+=(Math.random()-.5)*40;qy+=(Math.random()-.5)*40;c2.lineTo(qx,qy)}c2.stroke()}
+for(k=0;k<1400;k++){c2.fillStyle="rgba("+(k%2?"0,0,0":"130,180,155")+","+(.03+Math.random()*.07)+")";c2.fillRect(Math.random()*512,Math.random()*512,2+Math.random()*3,2+Math.random()*3)}
+var colorT=new TH.CanvasTexture(cc);colorT.wrapS=colorT.wrapT=TH.RepeatWrapping;colorT.repeat.set(1,9);colorT.encoding=TH.sRGBEncoding;colorT.anisotropy=R.capabilities.getMaxAnisotropy();
+scaleT.anisotropy=R.capabilities.getMaxAnisotropy();
+var scaleH=scaleT.clone();scaleH.needsUpdate=true;scaleH.repeat.set(5,12);
+/* body */
+var N=low?72:110,Mr=low?14:26,SP=.17*(110/N),body,bmat,pts=[],V=new TH.Vector3(),UP=new TH.Vector3(0,1,0);
+for(var i=0;i<N;i++)pts.push(new TH.Vector3());
+var bg=new TH.BufferGeometry(),pos=new Float32Array(N*(Mr+1)*3),uv=new Float32Array(N*(Mr+1)*2),idx=[];
+for(i=0;i<N;i++)for(var j=0;j<=Mr;j++){uv[(i*(Mr+1)+j)*2]=j/Mr;uv[(i*(Mr+1)+j)*2+1]=i/N}
+for(i=0;i<N-1;i++)for(j=0;j<Mr;j++){var a=i*(Mr+1)+j,b=a+Mr+1;idx.push(a,b,a+1,b,b+1,a+1)}
+bg.setAttribute("position",new TH.BufferAttribute(pos,3));bg.setAttribute("uv",new TH.BufferAttribute(uv,2));bg.setIndex(idx);
+bmat=new TH.MeshPhysicalMaterial({color:0xffffff,map:colorT,metalness:.35,roughness:.5,clearcoat:.5,clearcoatRoughness:.35,bumpMap:scaleT,bumpScale:3,emissive:0x000000,emissiveIntensity:0,envMapIntensity:0,side:TH.DoubleSide});
+body=new TH.Mesh(bg,bmat);body.frustumCulled=false;body.castShadow=true;body.receiveShadow=true;scene.add(body);
+var FT=[],FN=[],FB=[],FR=new Float32Array(N),SPN=[];
+for(i=0;i<N;i++){FT.push(new TH.Vector3());FN.push(new TH.Vector3());FB.push(new TH.Vector3())}
+for(i=2;i<N-14;i+=2)SPN.push(i);
+var spG=new TH.BufferGeometry(),spPos=new Float32Array(SPN.length*27),spCol=new Float32Array(SPN.length*27);
+for(i=0;i<SPN.length*3;i++){spCol.set([.05,.2,.12,.05,.2,.12,.2,.6,.4],i*9)}
+spG.setAttribute("position",new TH.BufferAttribute(spPos,3));spG.setAttribute("color",new TH.BufferAttribute(spCol,3));
+var spMesh=new TH.Mesh(spG,new TH.MeshStandardMaterial({color:0x1b2b23,metalness:.25,roughness:.45,side:TH.DoubleSide}));spMesh.frustumCulled=false;spMesh.castShadow=true;scene.add(spMesh);
+var fnPos=new Float32Array(2*3*9),fnG=new TH.BufferGeometry();fnG.setAttribute("position",new TH.BufferAttribute(fnPos,3));
+var fnMesh=new TH.Mesh(fnG,new TH.MeshStandardMaterial({color:0x0f1814,metalness:.3,roughness:.5,side:TH.DoubleSide,emissive:0x000000,emissiveIntensity:0}));fnMesh.frustumCulled=false;fnMesh.castShadow=true;fnMesh.receiveShadow=true;scene.add(fnMesh);
+var tp=new TH.Vector3(),tq=new TH.Vector3(),dv=new TH.Vector3(),fa=new TH.Vector3(),fb=new TH.Vector3(),fc=new TH.Vector3(),fd=new TH.Vector3(),fe=new TH.Vector3();
+function put(arr,o,v){arr[o]=v.x;arr[o+1]=v.y;arr[o+2]=v.z}
+function spines(){var o=0;
+ for(var n=0;n<SPN.length;n++){var i=SPN[n],s=i/(N-1),h=.28*sm(s,.01,.08)*(1-sm(s,.3,.95))+.045,w=.16+.12*h;
+  for(var b=0;b<3;b++){dv.copy(FN[i]);if(b)dv.addScaledVector(FB[i],b===1?.55:-.55).normalize();
+   tp.copy(pts[i]).addScaledVector(FN[i],FR[i]*.9);
+   tq.copy(tp).addScaledVector(FT[i],w);put(spPos,o,tq);o+=3;
+   tq.copy(tp).addScaledVector(FT[i],-w);put(spPos,o,tq);o+=3;
+   tq.copy(tp).addScaledVector(dv,h*(b?.8:1)).addScaledVector(FT[i],-h*.55);put(spPos,o,tq);o+=3}}
+ spG.attributes.position.needsUpdate=true;spG.computeVertexNormals()}
+function fins(t){var o=0,i0=10,i1=22,fl=Math.sin(t*1.3)*.35;
+ [-1,1].forEach(function(sd){
+  fa.copy(pts[i0]).addScaledVector(FB[i0],sd*FR[i0]*.9);fb.copy(pts[i1]).addScaledVector(FB[i1],sd*FR[i1]*.9);
+  fc.copy(fa).addScaledVector(FB[i0],sd*3.4).addScaledVector(FN[i0],.6+fl).addScaledVector(FT[i0],-1.4);
+  fd.copy(fb).addScaledVector(FB[i1],sd*2.6).addScaledVector(FN[i1],.2+fl*.7).addScaledVector(FT[i1],-2.6);
+  fe.copy(fc).lerp(fd,.5).addScaledVector(FB[i0],sd*.5).addScaledVector(FN[i0],.3);
+  put(fnPos,o,fa);o+=3;put(fnPos,o,fc);o+=3;put(fnPos,o,fe);o+=3;
+  put(fnPos,o,fa);o+=3;put(fnPos,o,fe);o+=3;put(fnPos,o,fd);o+=3;
+  put(fnPos,o,fa);o+=3;put(fnPos,o,fd);o+=3;put(fnPos,o,fb);o+=3});
+ fnG.attributes.position.needsUpdate=true;fnG.computeVertexNormals()}
+/* head */
+/* pure head geometry: no THREE needed. head-local: +z forward, +y up, +x right */
+var HG=(function(){
+function cr(a,b,c,d,t){return .5*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t*t+(-a+3*b-3*c+d)*t*t*t)}
+function sampleSt(st,n){var out=[],m=st.length;for(var i=0;i<n;i++){var f=i/(n-1)*(m-1),k=Math.min(m-2,Math.floor(f)),t=f-k,r=[];for(var c=0;c<4;c++)r.push(cr(st[Math.max(k-1,0)][c],st[k][c],st[k+1][c],st[Math.min(k+2,m-1)][c],t));out.push(r)}return out}
+function sstep(a,b,x){var t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t)}
+function mix(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t]}
+function loft(st,n,ring,e,colFn){var S=sampleSt(st,n),pos=[],uv=[],col=[],idx=[],i,j;
+ for(i=0;i<n;i++){var z=S[i][0],wx=S[i][1],yt=S[i][2],yb=S[i][3],yc=(yt+yb)/2,hh=(yt-yb)/2;
+  for(j=0;j<=ring;j++){var a=j/ring*6.28319,ca=Math.cos(a),sa=Math.sin(a);
+   pos.push(wx*Math.sign(ca)*Math.pow(Math.abs(ca),e),yc+hh*Math.sign(sa)*Math.pow(Math.abs(sa),e),z);uv.push(j/ring,i/(n-1));
+   var c=colFn(sa,i/(n-1));col.push(c[0],c[1],c[2])}}
+ for(i=0;i<n-1;i++)for(j=0;j<ring;j++){var p=i*(ring+1)+j,q=p+ring+1;idx.push(p,q,p+1,q,q+1,p+1)}
+ return{pos:pos,uv:uv,col:col,idx:idx,S:S}}
+/* stations: [z, halfWidth, yTop, yBottom] */
+var UP=[[-1.5,.74,.6,-.4],[-.7,1.0,.92,-.6],[.2,.92,.86,-.52],[1.0,.72,.7,-.36],[1.7,.52,.48,-.26],[2.4,.4,.3,-.18],[3.0,.33,.14,-.2],[3.4,.26,-.06,-.42],[3.78,.12,-.32,-.82]];
+var LO=[[-.9,.74,-.32,-.85],[0,.8,-.36,-.95],[1.0,.62,-.3,-.84],[2.0,.46,-.22,-.66],[2.9,.32,-.14,-.5],[3.25,.18,-.1,-.42]];
+var SKIN=[.035,.055,.045],BELLY=[.11,.14,.12],FLESH=[.2,.06,.07];
+function colU(sa){return mix(mix(SKIN,[.07,.095,.08],sstep(0,1,sa)),FLESH,sstep(-.4,-.75,sa))}
+function colL(sa){return mix(mix(SKIN,BELLY,sstep(-.1,-.9,sa)),FLESH,sstep(.4,.8,sa))}
+var PIV=[0,-.35,-.9];
+function at(S,z,c){for(var i=0;i<S.length-1;i++)if(z<=S[i+1][0]){var t=(z-S[i][0])/(S[i+1][0]-S[i][0]);return S[i][c]+(S[i+1][c]-S[i][c])*Math.min(1,Math.max(0,t))}return S[S.length-1][c]}
+function build(){
+ var U=loft(UP,72,40,.62,colU),L=loft(LO,56,40,.62,colL);
+ var teeth=[],lteeth=[],spikes=[],i,k,sd;
+ for(sd=-1;sd<=1;sd+=2){
+  for(k=0;k<10;k++){var z=.45+k*.3,wx=at(U.S,z,1),yb=at(U.S,z,3),yt=at(U.S,z,2),len=.3+.14*Math.pow(Math.sin(k*2.1),2)+(k>=7?.3:0)+(k===8?.25:0),x=sd*wx*.8;
+   teeth.push({b:[x,yb+(yt-yb)*.12,z],t:[x*.98,yb-len,z+.05],r:.06+.02*(k>=7)});}
+  for(k=0;k<8;k++){var z2=.6+k*.3,w2=at(L.S,z2,1),yt2=at(L.S,z2,2),len2=.26+.1*Math.pow(Math.sin(k*1.7),2)+(k>=6?.2:0),x2=sd*w2*.72;
+   lteeth.push({b:[x2,yt2-.14,z2],t:[x2,yt2+len2,z2+.05],r:.055})}
+  for(k=0;k<7;k++){var zz=1.0-k*.38,ty=at(U.S,zz,2);spikes.push({b:[sd*.3,ty-.08,zz],t:[sd*.34,ty+.38+.12*Math.sin(k*1.2),zz-.85],r:.085})}
+  spikes.push({b:[sd*.9,-.02,-.5],t:[sd*1.55,.2,-1.5],r:.12},{b:[sd*.92,-.3,-.1],t:[sd*1.5,-.4,-.95],r:.1},{b:[sd*.5,at(U.S,.9,2)-.04,.9],t:[sd*.66,at(U.S,.9,2)+.3,.35],r:.07});
+ }
+ for(k=0;k<8;k++){var zc=1.1-k*.38,tc=at(U.S,zc,2);spikes.push({b:[0,tc-.08,zc],t:[0,tc+.55+.15*Math.sin(k*1.1),zc-.95],r:.1})}
+ return{U:U,L:L,teeth:teeth,lteeth:lteeth,spikes:spikes,PIV:PIV,
+  eye:{x:.64,y:.44,z:1.0},nostril:{y:at(U.S,2.95,2)+.0,z:2.95}}}
+return{build:build,at:at}})();
+
+
+/* ---- head: lofted angular skull with hooked beak, real jaw, teeth inside the mouth ---- */
+var head=new TH.Group(),HD=HG.build(),PV=HD.PIV,
+hm=new TH.MeshPhysicalMaterial({color:0xffffff,vertexColors:true,metalness:.12,roughness:.62,clearcoat:.48,clearcoatRoughness:.28,bumpMap:scaleH,bumpScale:4.2,envMapIntensity:0,side:TH.DoubleSide}),
+tm=new TH.MeshStandardMaterial({color:0xc9c4b2,metalness:.1,roughness:.5}),spm=new TH.MeshStandardMaterial({color:0x16241d,metalness:.3,roughness:.45}),
+browM=new TH.MeshStandardMaterial({color:0x16221b,metalness:.3,roughness:.5}),blk=new TH.MeshBasicMaterial({color:0x05080c}),eyeM=new TH.MeshStandardMaterial({color:0x8ba95c,emissive:0x183d20,emissiveIntensity:.38,roughness:.3,metalness:.08}),fleshM=new TH.MeshStandardMaterial({color:0x4a1a22,roughness:.6});
+var sph=new TH.SphereGeometry(1,48,32),cone=new TH.ConeGeometry(1,1,20);
+function mesh(g,m,px,py,pz,sx,sy,sz,par){var o=new TH.Mesh(g,m);o.position.set(px,py,pz);o.scale.set(sx,sy,sz);(par||head).add(o);return o}
+function geoFrom(g){var G=new TH.BufferGeometry();G.setAttribute("position",new TH.BufferAttribute(new Float32Array(g.pos),3));G.setAttribute("uv",new TH.BufferAttribute(new Float32Array(g.uv),2));G.setAttribute("color",new TH.BufferAttribute(new Float32Array(g.col),3));G.setIndex(g.idx);G.computeVertexNormals();return G}
+function coneAt(o,m,par,off){var b=new TH.Vector3(o.b[0]-off[0],o.b[1]-off[1],o.b[2]-off[2]),t=new TH.Vector3(o.t[0]-off[0],o.t[1]-off[1],o.t[2]-off[2]),d=new TH.Vector3().subVectors(t,b),l=d.length(),c=new TH.Mesh(cone,m);
+ c.scale.set(o.r,l,o.r);c.position.copy(b).addScaledVector(d,.5);c.quaternion.setFromUnitVectors(UP,d.normalize());par.add(c);return c}
+head.add(new TH.Mesh(geoFrom(HD.U),hm));
+for(i=0;i<HD.L.pos.length;i+=3){HD.L.pos[i]-=PV[0];HD.L.pos[i+1]-=PV[1];HD.L.pos[i+2]-=PV[2]}
+var jawP=new TH.Group();jawP.position.set(PV[0],PV[1],PV[2]);head.add(jawP);jawP.add(new TH.Mesh(geoFrom(HD.L),hm));
+HD.teeth.forEach(function(o){coneAt(o,tm,head,[0,0,0])});HD.lteeth.forEach(function(o){coneAt(o,tm,jawP,PV)});/* Removed exaggerated horn geometry for a cleaner, more snake-like silhouette. */
+mesh(sph,fleshM,0,.1,2.3,.26,.06,1.15,jawP);
+[-1,1].forEach(function(s){mesh(sph,browM,s*.5,.66,1.0,.3,.1,.55);mesh(sph,blk,s*.62,.44,1.0,.12,.1,.16);mesh(sph,eyeM,s*.66,.45,1.02,.06,.05,.08);mesh(sph,blk,s*.705,.45,1.02,.012,.05,.02);mesh(sph,blk,s*.1,HD.nostril.y+.02,HD.nostril.z,.045,.03,.08)});
+var hemi=new TH.HemisphereLight(0x7fd8b0,0x010302,0);scene.add(hemi);
+/* eye glow: visible from the first frame so the eyes appear before anything else */
+var glows=[];[-1,1].forEach(function(s){var sp=new TH.Sprite(new TH.SpriteMaterial({map:glowT,blending:TH.AdditiveBlending,transparent:true,depthWrite:false}));sp.position.set(s*.66,.45,1.1);sp.scale.set(1.1,1.1,1);head.add(sp);glows.push(sp)});
+/* feelers under the jaw and long trailing whiskers */
+var TDL=[],tdM=new TH.MeshStandardMaterial({color:0x0f1814,metalness:.4,roughness:.4});
+function mkTend(x0,y0,z0,dx,dy,dz,len,segs,sway,nd,rad){var l=Math.sqrt(dx*dx+dy*dy+dz*dz);dx/=l;dy/=l;dz/=l;
+ var sx=-dz,sz=dx,sl=Math.sqrt(sx*sx+sz*sz);if(sl<.01){sx=1;sz=0;sl=1}sx/=sl;sz/=sl;
+ var ux=dy*sz,uy=dz*sx-dx*sz,uz=-dy*sx,n=segs+1,ring=6,idx2=[],pos2=new Float32Array(n*ring*3),g=new TH.BufferGeometry();
+ for(var a=0;a<segs;a++)for(var j=0;j<ring;j++){var p0=a*ring+j,p1=a*ring+(j+1)%ring,q0=(a+1)*ring+j,q1=(a+1)*ring+(j+1)%ring;idx2.push(p0,q0,p1,q0,q1,p1)}
+ g.setAttribute("position",new TH.BufferAttribute(pos2,3));g.setIndex(idx2);
+ var dpos=new Float32Array(nd*3),dg=new TH.BufferGeometry();dg.setAttribute("position",new TH.BufferAttribute(dpos,3));
+ var m=new TH.Mesh(g,tdM);m.frustumCulled=false;head.add(m);
+ TDL.push({x0:x0,y0:y0,z0:z0,dx:dx,dy:dy,dz:dz,len:len,segs:segs,sway:sway,nd:nd,rad:rad,sx:sx,sz:sz,ux:ux,uy:uy,uz:uz,ph:Math.random()*6.28,pos:pos2,geo:g,dpos:dpos,dgeo:dg,CL:new Float32Array(n*3)})}
+[-1,1].forEach(function(s){mkTend(s*.25,-.7,1.9,s*.1,-1,-.35,4.2,18,.5,6,.05);mkTend(s*.4,-.85,.8,s*.3,-1,-.5,3.4,16,.5,5,.045);
+ mkTend(s*.9,.1,-.8,s*.6,.5,-1,9,34,1.4,12,.06);mkTend(s*.95,-.2,-.4,s*.9,.1,-1,6,24,1.0,8,.05)});
+function tendrils(t){TDL.forEach(function(d){var n=d.segs+1,CL=d.CL,k,j,u,w1,w2;
+ for(k=0;k<n;k++){u=k/d.segs;w1=Math.sin(t*1.3+d.ph+u*3.4)*d.sway*u*u;w2=Math.sin(t*.9+d.ph*1.7+u*2.6)*d.sway*.55*u*u;
+  CL[k*3]=d.x0+d.dx*d.len*u+d.sx*w1+d.ux*w2;CL[k*3+1]=d.y0+d.dy*d.len*u+d.uy*w2;CL[k*3+2]=d.z0+d.dz*d.len*u+d.sz*w1+d.uz*w2}
+ var p=d.pos,o=0;
+ for(k=0;k<n;k++){var a=Math.max(k-1,0),b2=Math.min(k+1,n-1),tx=CL[b2*3]-CL[a*3],ty=CL[b2*3+1]-CL[a*3+1],tz=CL[b2*3+2]-CL[a*3+2],tl=Math.sqrt(tx*tx+ty*ty+tz*tz)||1;tx/=tl;ty/=tl;tz/=tl;
+  var nx,ny,nz,nl;if(Math.abs(ty)<.8){nx=-tz;ny=0;nz=tx}else{nx=ty;ny=-tx;nz=0}nl=Math.sqrt(nx*nx+ny*ny+nz*nz)||1;nx/=nl;ny/=nl;nz/=nl;
+  var bx=ty*nz-tz*ny,by=tz*nx-tx*nz,bz=tx*ny-ty*nx,r=d.rad*(1-k/n*.85)+.005;
+  for(j=0;j<6;j++){var an=j/6*6.2832,cs=Math.cos(an)*r,sn=Math.sin(an)*r;p[o++]=CL[k*3]+nx*cs+bx*sn;p[o++]=CL[k*3+1]+ny*cs+by*sn;p[o++]=CL[k*3+2]+nz*cs+bz*sn}}
+ d.geo.attributes.position.needsUpdate=true;d.geo.computeVertexNormals()})}
+head.traverse(function(o){if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+head.scale.setScalar(.8);scene.add(head);
+/* world */
+var P0=[[-26,0,-60],[-18,1,-46],[-6,2.2,-36],[6,.8,-26],[14,2.5,-14],[8,1.2,-2],[-4,0,4],[-12,2.8,14],[-8,1,26],[4,0,34]].map(function(p){return new TH.Vector3(p[0],p[1],p[2])});
+var path=new TH.CatmullRomCurve3(P0,false,"catmullrom",.5),L=path.getLength(),p0=path.getPointAt(0),t0=path.getTangentAt(0);
+var floor=new TH.Mesh(new TH.PlaneGeometry(500,500),new TH.MeshStandardMaterial({color:0x0b120e,metalness:.15,roughness:.85,envMapIntensity:.25}));floor.rotation.x=-Math.PI/2;floor.position.y=-3.4;floor.receiveShadow=true;scene.add(floor);
+var pm2=new TH.MeshStandardMaterial({color:0x040806,metalness:.85,roughness:.35}),ems=new TH.LineBasicMaterial({color:0x34e89e,transparent:true,opacity:.35});
+for(i=0;i<(low?16:34);i++){var u=Math.random(),pp=path.getPointAt(u),sd=(Math.random()<.5?-1:1)*(8+Math.random()*22),sx=1.6+Math.random()*3,sy=6+Math.random()*30,sz=1.6+Math.random()*3;
+ var pil=new TH.Mesh(new TH.BoxGeometry(1,1,1),pm2);pil.scale.set(sx,sy,sz);pil.position.set(pp.x+sd,sy/2-3.4,pp.z+(Math.random()-.5)*10);pil.castShadow=true;pil.receiveShadow=true;scene.add(pil);
+ if(!low&&i%2===0){var ed=new TH.LineSegments(new TH.EdgesGeometry(new TH.BoxGeometry(1,1,1)),ems);ed.scale.copy(pil.scale);ed.position.copy(pil.position);scene.add(ed)}}
+var NP=low?500:1400,pg=new TH.BufferGeometry(),pa=new Float32Array(NP*3);for(i=0;i<NP;i++){pa[i*3]=(Math.random()-.5)*90;pa[i*3+1]=-3+Math.random()*22;pa[i*3+2]=-60+Math.random()*100}
+pg.setAttribute("position",new TH.BufferAttribute(pa,3));var parts=new TH.Points(pg,new TH.PointsMaterial({color:0x8dffd0,size:.12,transparent:true,opacity:.7,blending:TH.AdditiveBlending,depthWrite:false}));scene.add(parts);
+var sdv=new TH.Vector3();
+for(var tk=0;tk<(low?6:12);tk++){var lp=[],lc=[];for(var m=0;m<=70;m++){var uu=m/70,q2=path.getPointAt(uu),tg=path.getTangentAt(uu);sdv.crossVectors(tg,UP).normalize();var o=(tk-6)*1.4+Math.sin(uu*9+tk)*.8;lp.push(q2.x+sdv.x*o,q2.y+1+Math.sin(uu*7+tk*2)*1.3+(tk%3),q2.z+sdv.z*o);var f=Math.sin(uu*Math.PI);lc.push(.15*f,.85*f,.5*f)}
+ var lg=new TH.BufferGeometry();lg.setAttribute("position",new TH.Float32BufferAttribute(lp,3));lg.setAttribute("color",new TH.Float32BufferAttribute(lc,3));scene.add(new TH.Line(lg,new TH.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.6,blending:TH.AdditiveBlending,depthWrite:false})))}
+var dtx=[];for(i=0;i<3;i++){var dc=cvs(256,64),dx=dc.getContext("2d");dx.font="600 26px monospace";dx.fillStyle="#9dffd0";var s2=["R "+(1000+Math.floor(Math.random()*9000))+",50","VAT 15%","+ "+(100+Math.floor(Math.random()*900))+",00"][i];dx.fillText(s2,10,40);dtx.push(new TH.CanvasTexture(dc))}
+for(i=0;i<(low?10:24);i++){var spr=new TH.Sprite(new TH.SpriteMaterial({map:dtx[i%3],transparent:true,opacity:.45,blending:TH.AdditiveBlending,depthWrite:false}));var qq=path.getPointAt(Math.random());spr.position.set(qq.x+(Math.random()-.5)*22,qq.y+1+Math.random()*9,qq.z+(Math.random()-.5)*12);spr.scale.set(4,1,1);scene.add(spr)}
+var key=new TH.PointLight(0x34e89e,0,50,2),rim=new TH.PointLight(0x9dffd0,0,40,2);var amb=new TH.AmbientLight(0x04100a,0);scene.add(key,rim,amb);
+var sun=new TH.DirectionalLight(0xcfffe8,1.5),sh2=sun.shadow.camera;sun.castShadow=true;sun.shadow.mapSize.set(low?1024:2048,low?1024:2048);sh2.left=-16;sh2.right=16;sh2.top=16;sh2.bottom=-16;sh2.near=1;sh2.far=60;sun.shadow.bias=-.001;sun.shadow.radius=4;scene.add(sun,sun.target);
+/* maths helpers */
+function cl(v,a,b){return Math.min(b,Math.max(a,v))}
+function sm(v,a,b){var t=cl((v-a)/(b-a),0,1);return t*t*(3-2*t)}
+function lerp(a,b,t){return a+(b-a)*t}
+function trap(p,a,b,c,d){return sm(p,a,b)*(1-sm(p,c,d))}
+var T=new TH.Vector3(),Nn=new TH.Vector3(),Bn=new TH.Vector3(),F=new TH.Vector3(),S=new TH.Vector3(),H=new TH.Vector3(),tmp=new TH.Vector3(),tg2=new TH.Vector3(),look=new TH.Vector3(),bs=new TH.Matrix4(),X=new TH.Vector3(),Y=new TH.Vector3();
+function layout(th,t){var ph=th*L*.5+t*.7;
+ for(var i=0;i<N;i++){var u=th-i*SP/L*1;if(u>=0){path.getPointAt(Math.min(u,1),tmp);path.getTangentAt(Math.min(u,1),tg2)}else{tmp.copy(p0).addScaledVector(t0,u*L);tg2.copy(t0)}
+  var s=i/(N-1);S.crossVectors(tg2,UP).normalize();var amp=(.1+1.05*Math.sin(cl(s*1.5,0,1)*1.5708))*.9;
+  pts[i].copy(tmp).addScaledVector(S,Math.sin(ph-i*.28)*amp);pts[i].y+=Math.sin(ph*.7-i*.21)*.14*s}}
+function build(){var p=bg.attributes.position.array;
+ for(var i=0;i<N;i++){var a=pts[Math.max(i-1,0)],b=pts[Math.min(i+1,N-1)];T.subVectors(a,b).normalize();
+  if(i===0){Nn.copy(UP)}Nn.addScaledVector(T,-Nn.dot(T)).normalize();Bn.crossVectors(T,Nn);
+  if(i===0){F.copy(T);X.copy(Nn)}
+  var s=i/(N-1),rr=(.7*(.7+.3*sm(s,0,.2))*Math.pow(1-sm(s,.4,1),.9)+.025)*(1+.025*Math.sin(i*.45-time*1.8));FT[i].copy(T);FN[i].copy(Nn);FB[i].copy(Bn);FR[i]=rr;
+  for(var j=0;j<=Mr;j++){var an=j/Mr*6.2832,ca=Math.cos(an),c=ca*rr*(ca<0?.62:.95),d=Math.sin(an)*rr*1.12,k=(i*(Mr+1)+j)*3;
+   p[k]=pts[i].x+Nn.x*c+Bn.x*d;p[k+1]=pts[i].y+Nn.y*c+Bn.y*d;p[k+2]=pts[i].z+Nn.z*c+Bn.z*d}}
+ bg.attributes.position.needsUpdate=true;bg.computeVertexNormals()}
+function place(){F.subVectors(pts[0],pts[4]).normalize();H.copy(pts[0]).addScaledVector(F,.3);head.position.copy(H);
+ Y.copy(UP);X.crossVectors(Y,F).normalize();Y.crossVectors(F,X);bs.makeBasis(X,Y,F);head.quaternion.setFromRotationMatrix(bs)}
+/* director: everything is a pure function of smoothed scroll progress */
+var P=0,tgt=0,time=0,last=0,run=false,started=false,mouse={x:0,y:0,tx:0,ty:0},els={h:$("hero"),a:$("t1"),b:$("t2"),c:$("t3"),d:$("dark"),f:$("flash"),m:$("mark"),hint:$("hint")};
+function setT(el,o,rise){el.style.opacity=o;el.style.transform="translateY("+(1-o)*rise+"px)";el.style.pointerEvents=o>.25?"auto":"none"}
+function update(P,t){
+ var th=lerp(.17,.86,sm(P,0,.74)*(1)+0);layout(th,t);build();place();spines();fins(t);tendrils(t);
+ /* Gentle breathing and cursor-aware drift; the original facing direction is preserved. */
+ head.position.x+=mouse.x*.10;head.position.y+=Math.sin(t*1.1)*.035-mouse.y*.045;head.scale.setScalar(.8*(1+Math.sin(t*1.1)*.004));
+ var r1=sm(P,.015,.12),pulse=.8+.2*Math.sin(t*2.2);
+ bmat.envMapIntensity=1.3*r1;hm.envMapIntensity=1.3*r1;bmat.emissiveIntensity=0;
+ key.intensity=120*r1;rim.intensity=60*r1;sun.intensity=1.2*r1;hemi.intensity=.6*r1;amb.intensity=.6*r1;
+ glows.forEach(function(g){g.material.opacity=(.55+.45*sm(P,0,.04))*pulse;g.scale.setScalar(.9+.35*pulse)});
+
+ var jaw=sm(P,.7,.8)*.95+(1-sm(P,.68,.8))*(.008+.009*Math.sin(t*1.15));jawP.rotation.x=jaw+Math.sin(t*.8)*.02*r1;
+ /* camera orbit: face-on reveal, orbit around the creature, return to front for the swallow */
+ var u0=sm(P,.05,.74),phi=u0*6.2832,cphi=Math.cos(phi),sphi=Math.sin(phi),Rr=lerp(7,10.5,(1-cphi)/2),hh=lerp(1.6,5.2,(1-cphi)/2);
+ S.crossVectors(F,UP).normalize();
+ cam.position.copy(H).addScaledVector(F,cphi*Rr).addScaledVector(S,sphi*Rr).addScaledVector(UP,hh);
+ look.copy(H).addScaledVector(F,lerp(.4,1.2,1-cphi)*.5);
+ var sw=sm(P,.78,.93),dive=sw*sw*sw;
+ if(dive>0){tmp.copy(H).addScaledVector(F,.7).addScaledVector(UP,-.05);cam.position.lerp(tmp,dive);look.lerp(tg2.copy(H).addScaledVector(F,-2),dive)}
+ cam.fov=lerp(48,76,dive);cam.updateProjectionMatrix();
+ cam.position.y=Math.max(cam.position.y,-2.8);cam.lookAt(look);
+ rim.position.copy(cam.position).addScaledVector(UP,2);key.position.copy(H).addScaledVector(UP,3).addScaledVector(F,2.5);sun.position.set(H.x+9,H.y+16,H.z+6);sun.target.position.copy(H);
+ parts.position.x=Math.sin(t*.1)*1.5;parts.rotation.y=P*.4;
+
+ /* text */
+ setT(els.h,trap(P,-.1,0,.07,.13),30);setT(els.a,trap(P,.16,.22,.3,.36),26);setT(els.b,trap(P,.38,.44,.52,.58),26);setT(els.c,trap(P,.6,.64,.7,.74),26);
+ els.hint.style.opacity=1-sm(P,.01,.06);
+ /* swallow: darkness closes in from the edges, emerald flash, then the mark */
+ var e=sm(P,.82,.93),cs=(1-e);
+ els.d.style.opacity=1;els.d.style.background="radial-gradient(circle at 50% 52%,rgba(0,0,0,0) "+(cs*72).toFixed(1)+"%,#000 "+(cs*72+cs*28+1.5).toFixed(1)+"%)";
+ if(P<.82)els.d.style.background="radial-gradient(circle at 50% 52%,rgba(0,0,0,0) 62%,rgba(0,0,0,.55) 110%)";
+ els.f.style.opacity=Math.sin(Math.PI*cl((P-.9)/.05,0,1))*.9;
+ els.m.style.opacity=sm(P,.945,.985);
+ document.body.classList.toggle("rev",P>.95)}
+function frame(now){if(!run)return;requestAnimationFrame(frame);var dt=Math.min(.05,(now-last)/1000||.016);last=now;time+=dt;P+=(tgt-P)*(1-Math.exp(-dt*7));
+ mouse.x+=(mouse.tx-mouse.x)*.045;mouse.y+=(mouse.ty-mouse.y)*.045;update(P,time);R.render(scene,cam);
+ if(!started){started=true;var l=$("load");l.style.opacity=0;setTimeout(function(){l.style.display="none"},900)}}
+function size(){var w=cv.clientWidth||innerWidth,h=cv.clientHeight||innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+addEventListener("resize",size);size();
+ScrollTrigger.create({trigger:"#story",start:"top top",end:"bottom bottom",scrub:true,onUpdate:function(s){tgt=s.progress}});
+var vis=true,tab=true;
+addEventListener("pointermove",function(e){if(e.pointerType&&e.pointerType!=="mouse")return;var r=cv.getBoundingClientRect();mouse.tx=cl((e.clientX-r.left)/Math.max(1,r.width)*2-1,-1,1);mouse.ty=cl((e.clientY-r.top)/Math.max(1,r.height)*2-1,-1,1)},{passive:true});
+addEventListener("pointerout",function(e){if(!e.relatedTarget){mouse.tx=0;mouse.ty=0}},{passive:true});
+/* Smooth pointer follow, kept deliberately subtle to preserve the original composition. */
+var originalFrame=frame;
+function sync(){var go=vis&&tab;if(go&&!run){run=true;last=performance.now();requestAnimationFrame(frame)}else if(!go)run=false}
+new IntersectionObserver(function(en){vis=en[0].isIntersecting;sync()},{threshold:0}).observe($("story"));
+document.addEventListener("visibilitychange",function(){tab=!document.hidden;sync()});
+cv.addEventListener("webglcontextlost",function(e){e.preventDefault();run=false;fallback()});
+tgt=0;update(0,0);R.render(scene,cam);sync();
+window.__liv={update:update,pts:pts,cam:cam,pos:pos,els:els,setP:function(v){P=tgt=v}};
+}catch(err){fallback();if(window.console)console.error(err)}
+})();
+</script>
+<script>
+/* ---- Livyato shared UI: consent banner + interactive buttons ---- */
+(function(){
+var KEY="liv_consent",FONT="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap",bar=null;
+function get(){try{return JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){return null}}
+function save(f){try{localStorage.setItem(KEY,JSON.stringify({v:1,fonts:!!f,t:new Date().toISOString()}))}catch(e){}}
+function fonts(){if(document.getElementById("liv-fonts"))return;var l=document.createElement("link");l.id="liv-fonts";l.rel="stylesheet";l.href=FONT;document.head.appendChild(l)}
+function hide(){if(bar&&bar.parentNode)bar.parentNode.removeChild(bar);bar=null}
+function choose(f){save(f);if(f)fonts();hide()}
+function show(){if(bar)return;var pol=(window.LIV_POLICY||"#cookies");bar=document.createElement("div");bar.id="liv-cc";bar.setAttribute("role","region");bar.setAttribute("aria-label","Cookie and storage notice");
+ bar.innerHTML='<p><b>Your privacy choices.</b> Livyato saves your work in your browser\u2019s local storage. That is strictly necessary and is never shared. With your permission we also load fonts from Google Fonts, which shares your IP address with Google. We do not use advertising or analytics cookies. <a href="'+pol+'" target="'+(pol.charAt(0)==="#"?"_self":"_top")+'">Read the cookie policy</a>.</p><div class="cc-b"><button type="button" data-c="1">Accept optional</button><button type="button" class="g" data-c="0">Essential only</button></div>';
+ bar.addEventListener("click",function(e){var b=e.target.closest("button[data-c]");if(b)choose(b.getAttribute("data-c")==="1")});document.body.appendChild(bar)}
+document.addEventListener("click",function(e){if(e.target.closest("[data-cookie-settings]")){e.preventDefault();show()}});
+var c=get();if(c){if(c.fonts)fonts()}else{if(document.body)show();else document.addEventListener("DOMContentLoaded",show)}
+/* interactive buttons: magnetic hover for mouse, press + pop + ripple for touch and mouse */
+var rm=!!(window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches),SEL="button,.btn,a.si,nav a.l,.fgrid li a,summary,#nav li",cur=null;
+function ok(el){return el&&!el.disabled&&el.getAttribute("aria-disabled")!=="true"}
+function reset(el){if(!el)return;el.classList.remove("liv-hov");el.style.removeProperty("--lx");el.style.removeProperty("--ly")}
+document.addEventListener("pointermove",function(e){if(rm||e.pointerType!=="mouse")return;var el=e.target.closest&&e.target.closest(SEL);if(!ok(el))el=null;
+ if(el!==cur){reset(cur);cur=el}
+ if(el){var r=el.getBoundingClientRect(),dx=(e.clientX-r.left-r.width/2)/(r.width||1),dy=(e.clientY-r.top-r.height/2)/(r.height||1);el.classList.add("liv-hov");el.style.setProperty("--lx",(dx*9).toFixed(1)+"px");el.style.setProperty("--ly",(dy*7).toFixed(1)+"px")}},{passive:true});
+document.addEventListener("pointerleave",function(){reset(cur);cur=null},true);
+document.addEventListener("pointerdown",function(e){var el=e.target.closest&&e.target.closest(SEL);if(!ok(el))return;
+ if(!rm)el.classList.add("liv-press");
+ if(!rm&&el.matches("button,.btn")){var cs=getComputedStyle(el);if(cs.position==="static")el.style.position="relative";el.style.overflow="hidden";
+  var r=el.getBoundingClientRect(),d=Math.max(r.width,r.height)*2,s=document.createElement("span");s.className="liv-rip";s.style.width=s.style.height=d+"px";s.style.left=(e.clientX-r.left-d/2)+"px";s.style.top=(e.clientY-r.top-d/2)+"px";el.appendChild(s);setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},700)}},{passive:true});
+function release(e){var els=document.querySelectorAll(".liv-press");[].forEach.call(els,function(el){el.classList.remove("liv-press");if(!rm){el.classList.remove("liv-pop");void el.offsetWidth;el.classList.add("liv-pop");setTimeout(function(){el.classList.remove("liv-pop")},420)}})}
+document.addEventListener("pointerup",release,{passive:true});document.addEventListener("pointercancel",release,{passive:true});
+})();
+
+</script>
+\n<script>
+/* Cursor field: still at rest, gently repelled and swirled by the mouse. */
+(function(){
+  var canvas=document.getElementById("edge-particles");
+  if(!canvas||!canvas.getContext||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  var ctx=canvas.getContext("2d"),w=0,h=0,dpr=1,particles=[],pointer={x:-9999,y:-9999,active:false},raf=0,last=0;
+  var mobile=window.matchMedia("(max-width: 700px)").matches;
+  var count=mobile?54:116,reach=mobile?125:190;
+  function rand(a,b){return a+Math.random()*(b-a)}
+  function resize(){
+    w=window.innerWidth;h=window.innerHeight;dpr=Math.min(window.devicePixelRatio||1,1.5);
+    canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+    canvas.style.width=w+"px";canvas.style.height=h+"px";ctx.setTransform(dpr,0,0,dpr,0,0);
+    particles=[];
+    for(var i=0;i<count;i++){
+      var side=Math.floor(Math.random()*4),pad=rand(10,76),x,y;
+      if(side===0){x=rand(0,w);y=pad}
+      else if(side===1){x=w-pad;y=rand(0,h)}
+      else if(side===2){x=rand(0,w);y=h-pad}
+      else{x=pad;y=rand(0,h)}
+      particles.push({x:x,y:y,hx:x,hy:y,vx:0,vy:0,r:rand(1,2.5),a:rand(.22,.68),seed:rand(0,6.28)});
+    }
+    draw();
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(var i=0;i<particles.length;i++){
+      var p=particles[i],dx=p.x-pointer.x,dy=p.y-pointer.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(pointer.active&&dist<reach){
+        var glow=1-dist/reach;
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r+glow*2.4,0,Math.PI*2);
+        ctx.fillStyle="rgba(91,255,177,"+(p.a+glow*.25)+")";ctx.shadowBlur=9+glow*16;ctx.shadowColor="rgba(52,232,158,.8)";ctx.fill();ctx.shadowBlur=0;
+      }else{
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle="rgba(75,235,157,"+p.a+")";ctx.fill();
+      }
+    }
+    if(pointer.active){
+      for(var a=0;a<particles.length;a++){var A=particles[a],ax=A.x-pointer.x,ay=A.y-pointer.y;if(ax*ax+ay*ay>reach*reach)continue;
+        for(var b=a+1;b<particles.length;b++){var B=particles[b],bx=B.x-pointer.x,by=B.y-pointer.y;if(bx*bx+by*by>reach*reach)continue;var lx=A.x-B.x,ly=A.y-B.y,dd=lx*lx+ly*ly;if(dd<3600){ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.strokeStyle="rgba(87,255,177,"+(.12*(1-Math.sqrt(dd)/60))+")";ctx.lineWidth=.65;ctx.stroke()}}
+      }
+    }
+  }
+  function tick(now){
+    raf=0;var dt=Math.min(.04,(now-last)/1000||.016);last=now;var moving=false;
+    for(var i=0;i<particles.length;i++){
+      var p=particles[i],dx=p.x-pointer.x,dy=p.y-pointer.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(pointer.active&&dist<reach){
+        var force=(1-dist/reach)*1050,inv=1/(dist||1);
+        p.vx+=(dx*inv*force-dy*inv*force*.22)*dt;
+        p.vy+=(dy*inv*force+dx*inv*force*.22)*dt;
+      }
+      p.vx+=(p.hx-p.x)*5.2*dt;p.vy+=(p.hy-p.y)*5.2*dt;
+      p.vx*=Math.pow(.88,dt*60);p.vy*=Math.pow(.88,dt*60);
+      p.x+=p.vx*dt;p.y+=p.vy*dt;
+      if(Math.abs(p.x-p.hx)+Math.abs(p.y-p.hy)>.35||Math.abs(p.vx)+Math.abs(p.vy)>.35)moving=true;
+    }
+    draw();
+    if(pointer.active||moving)raf=requestAnimationFrame(tick);
+  }
+  function wake(){if(!raf){last=performance.now();raf=requestAnimationFrame(tick)}}
+  window.addEventListener("pointermove",function(e){if(e.pointerType!=="mouse")return;pointer.x=e.clientX;pointer.y=e.clientY;pointer.active=true;wake()},{passive:true});
+  window.addEventListener("pointerout",function(e){if(e.relatedTarget)return;pointer.active=false;pointer.x=-9999;pointer.y=-9999;wake()},{passive:true});
+  window.addEventListener("blur",function(){pointer.active=false;pointer.x=-9999;pointer.y=-9999;wake()});
+  window.addEventListener("resize",resize,{passive:true});
+  document.addEventListener("visibilitychange",function(){if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=0}else{draw()}});
+  resize();
+})();
+</script>\n
+
+<script>
+/* Scroll reveals: observe sections and stagger their appearance as they enter view. */
+(function(){
+ if(!('IntersectionObserver' in window))return;
+ var site=document.getElementById('site');if(!site)return;
+ var targets=site.querySelectorAll('.s,.cta,footer .fgrid');
+ var io=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('liv-visible');io.unobserve(entry.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+ targets.forEach(function(el){io.observe(el)});
+})();
+</script>
+</body>
+</html>
